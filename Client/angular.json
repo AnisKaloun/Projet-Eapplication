@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "Projet-Eapp"
+  "defaultProject": "Projet-Eapp",
+  "cli": {
+    "analytics": "cd517510-18b4-49e4-9f02-bac8fdb4e26a"
+  }
 }

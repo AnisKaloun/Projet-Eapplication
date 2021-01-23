@@ -1,9 +1,15 @@
 <p>search-bar works!</p>
-<input type="text" name="searchBar">
-<input type="button" value="chercher">
-<p (click)="ShowOrHide()">list des relations</p>
-<div *ngIf="div1" >
-    <div *ngFor="let relation of ListRelation">
-    
-    </div>
+<input type="text" name="searchWord" (input)="updateData($event)">
+<input type="button" value="TEST" (click)="chercherDef()">
+<div *ngIf = "ShowDefGenerale === true">
+    <h3 >Definition générale : {{definition}}</h3>
 </div>
+
+<div *ngIf = "ShowRaffinements === true">
+  <h2 >Raffinements Sémantiques</h2>
+  <div  *ngFor="let def of RaffArray" >
+    <button  (click)="showDef(def)">{{def.formatedRaf}} </button>
+      <p *ngIf="def.show===true">{{def.definition}}</p>
+  </div>
+</div>
+
