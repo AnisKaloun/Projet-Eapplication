@@ -13,9 +13,11 @@ export class SearchBarComponent implements OnInit {
   mot :string="";
   public definition:string ="";
   public RaffArray: any[] = new Array();
+  public RelTypeArray: any[] = new Array();
+
   ShowDefGenerale:boolean=false;
   ShowRaffinements: boolean=false;
-
+  ShowTypeRelations: boolean=false;
   constructor(private JDMservice :JeuxDeMotService) { }
 
   ngOnInit(): void {
@@ -34,28 +36,33 @@ export class SearchBarComponent implements OnInit {
   chercherDef()
   {
   this.JDMservice.getDefinitions(this.mot).subscribe(res =>{
-    console.log(res.defGlobal);
+    
     this.definition=res[0].defGlobal;
+    console.log(this.definition);
     this.ShowDefGenerale=true;
     if(res.length>1)
     {
       this.RaffArray=res;
       this.RaffArray=this.RaffArray.slice(1);
-      this.RaffArray = this.RaffArray.map(function(o) {
-        o.show = false;
-        return o;
-      })
       this.ShowRaffinements=true;
       this.JDMservice.getDefinitionsRaff(this.mot).subscribe(res =>{
+      console.log("je suis la");
       if(res.length>1)
       {
-      console.log("j'ai les resultats");
       this.RaffArray=res;
       this.RaffArray=this.RaffArray.slice(1);    
       console.log(" "+res[1].definition);
       }
       });
+      this.JDMservice.getTypeRelations(this.mot).subscribe(res=>{
+        this.RelTypeArray=res;
+        this.ShowTypeRelations=true;
+      });
     }
+  });
+
+  this.JDMservice.getRelations(this.mot).subscribe(res=>{
+
   });
   }
 
@@ -67,8 +74,16 @@ export class SearchBarComponent implements OnInit {
     }
 }
 
+showType(type: { clicked: boolean; description: any; }){
+  if(type.clicked===false){
+    type.clicked=true;   
+    console.log(type.description);
+  }else{
+    type.clicked=false;
+  }
+}
 
-  
 
-  
+
+    
 }

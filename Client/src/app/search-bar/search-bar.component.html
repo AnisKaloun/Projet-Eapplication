@@ -12,4 +12,10 @@
       <p *ngIf="def.show===true">{{def.definition}}</p>
   </div>
 </div>
-
+<div *ngIf = "ShowTypeRelations === true">
+<h2 >Types de relations où on choisis les relations (A faire) </h2>
+  <div  *ngFor="let type of RelTypeArray" >
+    <button  (click)="showType(type)">{{type.name}} </button>
+      <p *ngIf="type.clicked===true">{{type.description}}</p>
+  </div>
+</div>

@@ -20,8 +20,8 @@ export class JeuxDeMotService {
 
   constructor(private http:HttpClient) { }
 
-  public getRelations(): Observable<any> {
-    return this.http.get(this.urlBase + '/relations');
+  public getRelations(word:any): Observable<any> {
+    return this.http.get(this.urlBase + '/getRelations/'+word);
   }
 
   public getDefinitions( word: any): Observable<any> {
@@ -30,5 +30,10 @@ export class JeuxDeMotService {
 
   public getDefinitionsRaff( word: any): Observable<any> {
     return this.http.get(this.urlBase + '/definitionRaf/'+word);
+  }
+
+  public getTypeRelations(word:any): Observable<any>
+  {
+    return this.http.get(this.urlBase+'/getTypeRelation/'+word);
   }
 }
