@@ -44,6 +44,7 @@ console.log("Dans le serveur");
           });
 
           response.on('end',()=>{
+            const regexEid=/(\(eid=[0-9]+\))/gs;
             const regex =/(<def>|<DEF>).*(<\/def>|<\/DEF>)/gs;
             const regex2 = /(\<[(|\/)a-z|A-Z( )*]+\>)/gs;
             const regexRafinement = /([a-z|A-Z]*>[0-9]*')/gm;
@@ -52,15 +53,21 @@ console.log("Dans le serveur");
           
             //on cherche la definition principale
             let definition = resp.match(regex);
-            //console.log(definition);
+            let eid=resp.match(regexEid);
+            console.log("eid = "+ eid);
+            //eid=eid[0].replace('(eid=','');
+            //eid=eid[0].replace(')','');
+            eid=eid[0].substring(5,(eid[0].length-1));
             definition=definition[0].replace(regex2,'');
             let obj=[
               {
+                "id":"",
                 "defGlobal":""
               }
           ];
 
             obj[0].defGlobal=definition;
+            obj[0].id=eid;
 
               //on cherche les raffinement
               let motRaf = resp.toString("utf8").match(regexRafinement);
@@ -237,7 +244,7 @@ console.log("Dans le serveur");
     }
   });
   
-    // avoir toutes les relations associées à ce mot 
+    // avoir toutes les relations et les noeuds associées  à ce mot 
     app.get("/getRelations/:word/", (req, res) => {
 
     let word= req.params.word;
@@ -262,13 +269,24 @@ console.log("Dans le serveur");
             data += chunk;
           });
           resp.on('end', () => {
-            const regex = /(r;[0-9]+;.*)/gm;
-            console.log(data.match(regex));
-            var nodes = data.match(regex);
-            var nodesArray = new Array();
+            //objet à envoyé
+            var resASend = {              
+              Entities: [], 
+              Relations: []
+            }; 
+            //expression régulieres pour les noeuds associées
+            const regexEntities = /(e;[0-9]+;.*)/gm;
+            var entitiesNodes = data.match(regexEntities);
+            var nodesEntitiesArray = new Array();
 
-          for(var s of nodes){ 
-            console.log(s+"\n");
+            //expression régulieres pour les relations associées
+            const regexRelations = /(r;[0-9]+;.*)/gm;
+            var relationNodes = data.match(regexRelations);
+            var nodesRelationsArray = new Array();
+
+          //extractions des relations
+          for(var s of relationNodes){ 
+           // console.log(s+"\n");
 
             var node = {
               idSource : s.split(";")[2],
@@ -277,18 +295,34 @@ console.log("Dans le serveur");
               poids : s.split(";")[5],
               }
               
-            nodesArray.push(node);
+              nodesRelationsArray.push(node);
           } 
+
+          for(var s of entitiesNodes){
+           
+            var node = {
+              id : s.split(";")[1],
+              name : s.split(";")[2].replace(/'/g,'')
+              }
   
-          fs.writeFile("./cache/Relation/"+word, JSON.stringify(nodesArray), {
+              nodesEntitiesArray.push(node);
+          } 
+          resASend.Entities.push(nodesEntitiesArray);
+          resASend.Relations.push(nodesRelationsArray);
+  
+          fs.writeFile("./cache/Relation/"+word, JSON.stringify(resASend), {
             flag: 'w'
           }, (err) => {
             if (err) throw err;
 
-            //console.log("on ecrit les relations du "+word+" sur le cache");
-           // res.end(JSON.stringify(nodesArray));
+            res.end(JSON.stringify(resASend));
           });
       });
     });      
   }
   });
+
+
+  
+
+  

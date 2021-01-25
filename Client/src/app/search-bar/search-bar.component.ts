@@ -8,16 +8,16 @@ import { JeuxDeMotService } from '../jeux-de-mot.service';
 })
 export class SearchBarComponent implements OnInit {
 
-  public  ListRelation=[];
   div1=true;
   mot :string="";
   public definition:string ="";
   public RaffArray: any[] = new Array();
   public RelTypeArray: any[] = new Array();
-
+  public ListRelation : string[] = [];
   ShowDefGenerale:boolean=false;
   ShowRaffinements: boolean=false;
   ShowTypeRelations: boolean=false;
+  reltype:boolean=false;
   constructor(private JDMservice :JeuxDeMotService) { }
 
   ngOnInit(): void {
@@ -83,7 +83,19 @@ showType(type: { clicked: boolean; description: any; }){
   }
 }
 
-
-
+printRelationType()
+{
+  if(this.reltype==false)
+  {
+    this.reltype=true
+  }else{
+    this.reltype=false
+  }
+}
+listerRelation(nom: string)
+{
+    this.ListRelation.push(nom);
+    console.log("liste des relations : " + this.ListRelation); 
+}
     
 }

@@ -36,4 +36,5 @@ export class JeuxDeMotService {
   {
     return this.http.get(this.urlBase+'/getTypeRelation/'+word);
   }
+
 }
