@@ -1,3 +1,4 @@
+
 const { response } = require('express');
 const express = require('express');
 const app = express();
@@ -12,9 +13,91 @@ app.use(function (_req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', '*');
     next();
 });
+
+
+
+function OrdonnerEntrer() {
+
+  if(!fs.existsSync("./cache/jdmEntriesOrdonner.txt")){ 
+    console.log("je suis la");
+   if (fs.existsSync("./cache/jdmEntries.txt")) {
+
+    fs.readFile("./cache/jdmEntries.txt","utf8",function read(err, data) {
+
+      data=data.toString("utf8");
+      let regex = new RegExp(";(.*);", "g");
+      entries = data.match(regex);
+      entries.forEach((word, index, arr) => {
+        w = word.substring(1, word.length - 1);
+        arr[index] = w;
+    });
+
+    entries.sort(new Intl.Collator('fr',{ sensitivity: 'base' }).compare);
+
+    fs.writeFile("./cache/jdmEntriesOrdonner.txt", JSON.stringify(entries), {
+      flag: 'w'
+    }, (err) => {
+      if (err) throw err;
+    });
+
+    });
+  }
+  else
+  {
+    console.log("le fichier de base n'existe pas");
+  }
+}
+   
+}
+
+
+
+
+OrdonnerEntrer();
 app.listen(8888);
 
 console.log("Dans le serveur");
+
+
+     //donne l'auto-complete
+    app.get("/autocomplete/:word", (req, res) => {
+    let pattern = req.params.word;
+
+    if (fs.existsSync("./cache/autocomplete/" + pattern)) {
+    console.log("lire dans le fichier");
+    fs.readFile("./cache/autocomplete/" + pattern, function read(err, data) {
+      let result = data.toString("utf8");
+      result = result.split("\n");
+      res.end(JSON.stringify(result));
+    })
+  } else {
+    fs.readFile("./cache/jdmEntriesOrdonner.txt", function read(err, data) {
+      const regex = new RegExp("[a-z|A-Z]*" + pattern + "[a-z|A-Z]*", 'gm');
+      let result = data.toString("utf8").match(regex);
+      let cache = "";
+      let indiceMax=10
+      if(result)
+      {
+      for (var i = 0; i < indiceMax; i++) {
+        if(cache.includes(result[i]))
+        {
+          indiceMax=indiceMax+1;
+        }
+        else
+        {
+        cache += result[i] + "\n";
+        }
+      }
+
+      fs.writeFile("./cache/autocomplete/" + pattern, cache, (err) => {
+        if (err) throw err;
+      });
+      res.end(JSON.stringify(cache));
+    }
+    });
+
+  }
+});
 
 
     //get la definition du mot et les raffinements

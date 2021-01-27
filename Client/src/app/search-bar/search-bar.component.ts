@@ -30,7 +30,12 @@ export class SearchBarComponent implements OnInit {
     if(target.value!=null)
     {
     this.mot = target.value;
-    console.log(this.mot);
+    if(this.mot.length%3==0)
+    {
+     this.JDMservice.getAutocomplete(this.mot).subscribe(res=>{
+       console.log(res);
+     }) 
+    }
     }
 }
   chercherDef()
@@ -62,6 +67,7 @@ export class SearchBarComponent implements OnInit {
   });
 
   this.JDMservice.getRelations(this.mot).subscribe(res=>{
+   
 
   });
   }

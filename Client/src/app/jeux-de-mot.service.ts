@@ -37,4 +37,9 @@ export class JeuxDeMotService {
     return this.http.get(this.urlBase+'/getTypeRelation/'+word);
   }
 
+  public getAutocomplete(word:any): Observable<any>
+  {
+    return this.http.get(this.urlBase+'/autocomplete/'+word);
+  }
+
 }
