@@ -62,6 +62,7 @@ console.log("Dans le serveur");
      //donne l'auto-complete
     app.get("/autocomplete/:word", (req, res) => {
     let pattern = req.params.word;
+    pattern=pattern.toLocaleLowerCase("fr");
 
     if (fs.existsSync("./cache/autocomplete/" + pattern)) {
     console.log("lire dans le fichier");
@@ -103,6 +104,8 @@ console.log("Dans le serveur");
     //get la definition du mot et les raffinements
     app.get("/definition/:word",(req, res) => {
      let word =req.params.word;
+     word=word.toLocaleLowerCase("fr");
+
      //console.log("je cherche la definition du mot "+word);
 
      if (fs.existsSync("./cache/definition/" + word)) {
@@ -131,7 +134,7 @@ console.log("Dans le serveur");
             const regex =/(<def>|<DEF>).*(<\/def>|<\/DEF>)/gs;
             const regex2 = /(\<[(|\/)a-z|A-Z( )*]+\>)/gs;
             const regexRafinement = /([a-z|A-Z]*>[0-9]*')/gm;
-            const regexRafinementFormated = /([a-z|A-Z]*>[a-z|A-Z|À-ÿ| ]*')/gm;
+            const regexRafinementFormated = /([a-z|A-Z]+>[a-z|A-Z|À-ÿ|-|'| ]*')/gm;
 
           
             //on cherche la definition principale
@@ -147,29 +150,27 @@ console.log("Dans le serveur");
                 "id":"",
                 "defGlobal":""
               }
-          ];
+            ];
 
             obj[0].defGlobal=definition;
             obj[0].id=eid;
 
               //on cherche les raffinement
-              let motRaf = resp.toString("utf8").match(regexRafinement);
+             // let motRaf = resp.toString("utf8").match(regexRafinement);
               let formRaf=resp.toString("utf8").match(regexRafinementFormated);
-              if(motRaf!=null && motRaf.length>0)
+              if(formRaf!=null && formRaf.length>0)
               {
-              for (var i = 0; i < motRaf.length; i++) {
+              for (var i = 0; i < formRaf.length; i++) {
                 let Rafin={
                   "formatedRaf":"",
-                  "codeRaf":"",
                   "definition":"",
                   "show":false
                 }
-                motRaf[i] = motRaf[i].slice(0, -1);
+                
+                console.log(formRaf[i]);
                 formRaf[i] = formRaf[i].slice(0, -1);
-                //console.log("code rafinement : "+formRaf[i]);
-                //console.log("rafinement : " + motRaf[i]);
                 Rafin.formatedRaf=formRaf[i];
-                Rafin.codeRaf=motRaf[i];
+               // Rafin.codeRaf=motRaf[i];
                 obj.push(Rafin);
               }
             }
@@ -197,6 +198,7 @@ console.log("Dans le serveur");
     app.get("/definitionRaf/:word",(req,res)=>
     {
       let word =req.params.word;
+      word=word.toLocaleLowerCase("fr");
      //console.log("je cherche la definition du rafinement du mot "+word);
 
      if (fs.existsSync("./cache/definition/" + word)) {
@@ -212,7 +214,7 @@ console.log("Dans le serveur");
               {
                 //console.log("je rentre dans le if");
                 //console.log("la relation : " +result[i].codeRaf);
-                let recherche=result[i].codeRaf;
+                let recherche=result[i].formatedRaf;
                 recherche.replace(">","%3E");
                 //console.log("i :"+i);
                 //definition du raffinement pas encore fetch
@@ -230,11 +232,14 @@ console.log("Dans le serveur");
 
                     let definition = data.match(regex);
                     //console.log(definition);
+                    if(definition)
+                    {
                     definition=definition[0].replace(regex2,'');
                   //  console.log("i :"+i);
                     //console.log("definition "+definition+ "pour la relation "+recherche);
-                    let findelement=result.findIndex(el=>el.codeRaf==recherche);
+                    let findelement=result.findIndex(el=>el.formatedRaf==recherche);
                     result[findelement].definition=definition;
+                    }
                   // console.log(result[findelement].codeRaf+" ****"+ result[findelement].definition);
                     //result[i].definition=definition;
                     compteur++;
@@ -276,7 +281,8 @@ console.log("Dans le serveur");
       //check si dans le cache
       
       let word = escape(req.params.word);
-      
+      word=word.toLocaleLowerCase("fr");
+
       //on vérifie le cache içi
       if (fs.existsSync("./cache/TypeRelation/" + word)) {
         //console.log("les types de relation existe sur le cache : "+word);
@@ -331,7 +337,7 @@ console.log("Dans le serveur");
     app.get("/getRelations/:word/", (req, res) => {
 
     let word= req.params.word;
-
+    word=word.toLocaleLowerCase("fr");
     console.log("on cherche les relations du mots:"+word);
     
      if (fs.existsSync("./cache/Relation/" + word)) {

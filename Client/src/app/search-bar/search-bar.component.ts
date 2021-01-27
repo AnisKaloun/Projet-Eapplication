@@ -30,7 +30,7 @@ export class SearchBarComponent implements OnInit {
     if(target.value!=null)
     {
     this.mot = target.value;
-    if(this.mot.length%3==0)
+    if(this.mot.length>0 &&this.mot.length%3==0)
     {
      this.JDMservice.getAutocomplete(this.mot).subscribe(res=>{
        console.log(res);
