@@ -1,0 +1,113 @@
+<body>
+    <div class="welcome_div">
+        <h1 class="welcome_title">Projet Jeu de mots</h1>
+
+        <h5 class="welcome_text">
+            Renseignez un mot pour lequel vous souhaitez connaître diverses informations, par défaut la définition et les raffinements sémantiques sont affichés.
+        </h5>
+
+        <div class="div_recherche_filtres">
+            <input type="text" name="word" class="input_search">
+            <button type="button" class="btn btn-primary button_search" (click)="search()">Rechercher</button>
+        </div>
+    </div>
+
+    <div class="div_datas_research">
+        <p *ngIf="showDefGenerale" class="wordDef"><B>Définition du mot :</B> {{ wordDef }}</p>
+
+        <p *ngIf="showRaffinements"><B>Raffinements sémantiques : </B></p>
+        
+        <div *ngIf="showRaffinements" class="divRaffinements">
+          <a *ngFor="let raffinement of raffinementsSem" href="#" data-toggle="modal" (click)="openModal(raffinement['formatedRaf'], raffinement['definition'])">
+            <span class="badge rounded-pill bg-warning text-dark raffinement_text">{{ raffinement["formatedRaf"]}}</span>
+          </a>
+        </div>
+        
+        <div *ngIf="showrelationsTypes" class="divTableButtons">
+          <a href="#" (click)="arrowClick(false)">
+            <img src="../assets/open-iconic-master/svg/arrow-thick-left.svg" class="leftArrow">
+          </a>
+
+          <button type="button" class="btn btn-secondary triAlphabetiqueButton" (click)="triAlphabetique()">Tri alphabétique</button>
+
+          <a href="#filtres_modal" data-toggle="modal" class="btnFiltre">
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filtres_modal">Filtres</button>
+          </a>
+
+          <button type="button" class="btn btn-secondary triPoidsButton" (click)="triPoids()">Tri poids</button>
+
+          <a href="#" (click)="arrowClick(true)">
+            <img src="../assets/open-iconic-master/svg/arrow-thick-right.svg" class="rightArrow">
+          </a> 
+        </div>
+        
+        <table *ngIf="researchIsDone" class="table searchTable">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Type relation</th>
+              <th scope="col">Source</th>
+              <th scope="col">Target</th>
+              <th scope="col">Poids</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trList of resultResearchList[indexResultResearchList]; let i = index;">
+              <td>{{ trList["relationType"] }}</td>
+              <td>{{ trList["source"]}}</td>
+              <td>{{ trList["target"]}}</td>
+              <td>{{ trList["poids"] }}</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+
+
+    <div class="modal fade" id="raffinement_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="raffinementModalTitle"></h5>
+          </div>
+          <div class="modal-body">
+            <p id="raffinementModalText"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="filtres_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Filtres</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-check">
+              <input (change)="isRelEntrante = !isRelEntrante" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                <B>relation entrante</B>
+              </label>
+            </div>
+            
+            <div class="form-check">
+              <input (change)="isRelSortante = !isRelSortante" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                <B>relation sortante</B>
+              </label>
+            </div>
+            
+            <div *ngFor="let relationType of relationsTypeList" class="form-check">
+              <input (change)="relationType['isSelected'] = !relationType['isSelected']" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                {{ relationType["name"] }}
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success button_validate_filters" (click)="validateFilters()">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>

@@ -1,0 +1,124 @@
+body {
+    width: 100%;
+    height: 100%;
+  
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 2%;
+}
+
+
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px; /* Adjusts for spacing */
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.modal-body {
+  max-height: 300px;
+
+  overflow-y: auto;
+}
+
+
+.welcome_div {
+    width: 100%;
+  
+    text-align: center;
+  
+    margin-bottom: 3%;
+}
+
+.welcome_title {
+    margin-bottom: 2%;
+}
+  
+.welcome_text {
+    margin-bottom: 2%;
+}
+
+
+.div_recherche_filtres {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input_search {
+  border-radius: 25px;
+
+  margin-right: 1.5%;
+}
+
+.button_search {
+  margin-right: 1.5%;
+} 
+
+
+.divRaffinements {
+  height: auto;
+  width: auto;
+
+  overflow: hidden;
+  
+  margin-bottom: 3%;
+}
+
+.raffinement_text {
+  margin-bottom: 1%;
+
+  font-size: medium;
+
+  float: left;
+  clear: left;
+}
+
+
+.divTableButtons {
+  width: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchTable {
+  margin-bottom: 3%;
+}
+
+.leftArrow {
+  width: 2vw;
+}
+
+.rightArrow {
+  width: 2vw;
+}
+
+.triAlphabetiqueButton {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.btnFiltre {
+  margin-right: 2%;
+}
+
+.triPoidsButton {
+  margin-right: 2%;
+}
+
