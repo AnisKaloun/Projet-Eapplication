@@ -106,7 +106,7 @@ console.log("Dans le serveur");
      let word =req.params.word;
      word=word.toLocaleLowerCase("fr");
 
-     //console.log("je cherche la definition du mot "+word);
+     console.log("je cherche la definition du mot "+word);
 
      if (fs.existsSync("./cache/definition/" + word)) {
         //console.log("la definition existe sur le cache : "+word);
@@ -134,7 +134,7 @@ console.log("Dans le serveur");
             const regex =/(<def>|<DEF>).*(<\/def>|<\/DEF>)/gs;
             const regex2 = /(\<[(|\/)a-z|A-Z( )*]+\>)/gs;
             const regexRafinement = /([a-z|A-Z]*>[0-9]*')/gm;
-            const regexRafinementFormated = /([a-z|A-Z]+>[a-z|A-Z|À-ÿ|-|'| ]*')/gm;
+            const regexRafinementFormated = /('[a-z|A-Z|À-ÿ|-|'| ]*>[a-z|A-Z|À-ÿ|-|'| ]*')/gm;
 
           
             //on cherche la definition principale
@@ -156,21 +156,24 @@ console.log("Dans le serveur");
             obj[0].id=eid;
 
               //on cherche les raffinement
-             // let motRaf = resp.toString("utf8").match(regexRafinement);
+              let codeRaf = resp.toString("utf8").match(regexRafinement);
               let formRaf=resp.toString("utf8").match(regexRafinementFormated);
               if(formRaf!=null && formRaf.length>0)
               {
+                console.log("taille code :"+codeRaf.length+" taille mot "+formRaf.length)
               for (var i = 0; i < formRaf.length; i++) {
                 let Rafin={
                   "formatedRaf":"",
+                  "codeRaf":"",
                   "definition":"",
                   "show":false
                 }
                 
                 console.log(formRaf[i]);
-                formRaf[i] = formRaf[i].slice(0, -1);
+                formRaf[i] = formRaf[i].slice(1, -1);
+                codeRaf[i]=codeRaf[i].slice(0,-1);
                 Rafin.formatedRaf=formRaf[i];
-               // Rafin.codeRaf=motRaf[i];
+                Rafin.codeRaf=codeRaf[i];
                 obj.push(Rafin);
               }
             }
@@ -198,9 +201,7 @@ console.log("Dans le serveur");
     app.get("/definitionRaf/:word",(req,res)=>
     {
       let word =req.params.word;
-      word=word.toLocaleLowerCase("fr");
-     //console.log("je cherche la definition du rafinement du mot "+word);
-
+     
      if (fs.existsSync("./cache/definition/" + word)) {
        //console.log("chat présent");
         //console.log("la definition existe sur le cache : "+word);
@@ -213,13 +214,16 @@ console.log("Dans le serveur");
               if(result[i].definition=="")
               {
                 //console.log("je rentre dans le if");
-                //console.log("la relation : " +result[i].codeRaf);
-                let recherche=result[i].formatedRaf;
-                recherche.replace(">","%3E");
+                console.log("la relation : " +result[i].codeRaf);
+                let recherche=result[i].codeRaf;
+                //recherche.replace(">","%3E");
+                               
+                console.log("recherche :"+recherche);
                 //console.log("i :"+i);
                 //definition du raffinement pas encore fetch
                 http.get("http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel="+recherche+"&rel=1",(response)=>
                 {
+                  
                   response.setEncoding('binary');
                   let data = '';
   
@@ -231,14 +235,20 @@ console.log("Dans le serveur");
                     const regex2 = /(\<[(|\/)a-z|A-Z( )*]+\>)/gs;
 
                     let definition = data.match(regex);
-                    //console.log(definition);
-                    if(definition)
+                    
+                    if(definition!=null && definition[0].replace(/\s/g, '').length)
                     {
                     definition=definition[0].replace(regex2,'');
+                   // console.log(definition);
                   //  console.log("i :"+i);
-                    //console.log("definition "+definition+ "pour la relation "+recherche);
-                    let findelement=result.findIndex(el=>el.formatedRaf==recherche);
+                    console.log("definition trouvé pour la relation "+recherche);
+                    let findelement=result.findIndex(el=>el.codeRaf==recherche);
                     result[findelement].definition=definition;
+                    }
+                    else
+                    {
+                      console.log("definition non trouvé pour la relation "+recherche);
+                      console.log("definition: "+definition);
                     }
                   // console.log(result[findelement].codeRaf+" ****"+ result[findelement].definition);
                     //result[i].definition=definition;
