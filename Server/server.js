@@ -148,7 +148,8 @@ console.log("Dans le serveur");
             let obj=[
               {
                 "id":"",
-                "defGlobal":""
+                "defGlobal":"",
+                "rafFound":false
               }
             ];
 
@@ -176,6 +177,7 @@ console.log("Dans le serveur");
                 Rafin.codeRaf=codeRaf[i];
                 obj.push(Rafin);
               }
+              obj[0].rafFound=true;
             }
             fs.writeFile("./cache/definition/"+word, JSON.stringify(obj), {
                 flag: 'w'
