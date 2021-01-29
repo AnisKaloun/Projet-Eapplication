@@ -5,6 +5,7 @@ body {
   padding-left: 3%;
   padding-right: 3%;
   padding-top: 2%;
+  padding-bottom: 3%;
 }
 
 
@@ -52,81 +53,73 @@ overflow-y: auto;
 
 
 .div_recherche_filtres {
-display: flex;
-justify-content: center;
-align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input_search {
-border-radius: 25px;
+  border-radius: 25px;
 
-margin-right: 1.5%;
+  margin-right: 1.5%;
 }
 
 .button_search {
-margin-right: 1.5%;
+  margin-right: 1.5%;
 } 
 
 
 .divRaffinements {
-height: auto;
-width: auto;
+  height: auto;
+  width: auto;
 
-overflow: hidden;
+  overflow: hidden;
 
-margin-bottom: 3%;
+  margin-bottom: 3%;
 }
 
 .raffinement_text {
-margin-bottom: 1%;
+  margin-bottom: 1%;
 
-font-size: medium;
+  font-size: medium;
 
-float: left;
-clear: left;
+  float: left;
+  clear: left;
 }
 
 
 .divTableButtons {
-width: 100%;
+  width: 100%;
 
-position: relative;
+  position: relative;
 
-overflow: hidden;
+  overflow: hidden;
 
-display: flex;
-justify-content: center;
-align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .searchTable {
-margin-bottom: 3%;
+  margin-bottom: 3%;
 }
 
 .leftArrow {
-width: 2vw;
+  width: 2vw;
 }
 
 .rightArrow {
-width: 2vw;
-}
-
-.triAlphabetiqueButton {
-margin-left: 2%;
-margin-right: 2%;
+  width: 2vw;
 }
 
 .btnFiltre {
-margin-right: 2%;
-}
-
-.triPoidsButton {
-margin-right: 2%;
+  margin-right: 2%;
+  margin-left: 2%;
 }
 
 .pg_number {
-position: absolute;
+  position: absolute;
 
-right: 0;
-top: 15%;
+  right: 0;
+  top: 15%;
 }

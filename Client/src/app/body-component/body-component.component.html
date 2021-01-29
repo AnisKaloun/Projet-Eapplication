@@ -17,24 +17,26 @@
 
       <p *ngIf="showRaffinements"><B>Raffinements sémantiques : </B></p>
 
-      <div *ngIf="showRaffinements" class="divRaffinements">
-        <a *ngFor="let raffinement of raffinementsSem" href="#" data-toggle="modal" (click)="openModal(raffinement['formatedRaf'], raffinement['definition'])">
-          <span class="badge rounded-pill bg-warning text-dark raffinement_text">{{ raffinement["formatedRaf"]}}</span>
-        </a>
-      </div>
+      <div *ngIf="showRaffinements">
+        <div *ngIf="rafFound" class="divRaffinements">
+          <a *ngFor="let raffinement of raffinementsSem" href="#" data-toggle="modal" (click)="openModal(raffinement['formatedRaf'], raffinement['definition'])">
+            <span class="badge rounded-pill bg-warning text-dark raffinement_text">{{ raffinement["formatedRaf"]}}</span>
+          </a>
+        </div>
 
-      <div *ngIf="showrelationsTypes" class="divTableButtons">
+        <div *ngIf="!rafFound" class="divRaffinements">
+          <p>Aucun raffinement trouvé !</p>
+        </div>
+      </div>
+      
+      <div *ngIf="researchIsDone" class="divTableButtons">
         <a href="#" (click)="arrowClick(false)">
           <img src="../assets/open-iconic-master/svg/arrow-thick-left.svg" class="leftArrow">
         </a>
 
-        <button type="button" class="btn btn-secondary triAlphabetiqueButton" (click)="triAlphabetique()">Tri alphabétique</button>
-
         <a href="#filtres_modal" data-toggle="modal" class="btnFiltre">
           <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filtres_modal">Filtres</button>
         </a>
-
-        <button type="button" class="btn btn-secondary triPoidsButton" (click)="triPoids()">Tri poids</button>
 
         <a href="#" (click)="arrowClick(true)">
           <img src="../assets/open-iconic-master/svg/arrow-thick-right.svg" class="rightArrow">
@@ -61,6 +63,10 @@
           </tr>
         </tbody>
       </table>
+
+      <div *ngIf="!researchIsDone && showRaffinements">
+        <p><B>Chargement des relations ...</B></p>
+      </div>
   </div>
 
 

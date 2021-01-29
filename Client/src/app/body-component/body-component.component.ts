@@ -14,7 +14,9 @@ export class BodyComponentComponent implements OnInit {
   public showDefGenerale: boolean = false;
   public showRaffinements: boolean = false;
   public showrelationsTypes: boolean = false;
- 
+  
+  public rafFound: boolean = true;
+
   public researchIsDone: boolean = false;
  
   public relationsTypeList: any;
@@ -35,7 +37,7 @@ export class BodyComponentComponent implements OnInit {
   public wordDef = "";
  
   constructor(private modalService: NgbModal, private JDMservice :JeuxDeMotService) { 
-    //this.relationsKeysList = Object.keys(this.relationsTypeList);
+    
   }
  
  
@@ -45,95 +47,118 @@ export class BodyComponentComponent implements OnInit {
  
   search() {
     this.searchWord = $(".input_search").val();
+
+    this.showDefGenerale = false;
+    this.showRaffinements = false;
+    this.showrelationsTypes = false;
+    this.rafFound = true;
+    this.researchIsDone = false;
+
     this.resultResearchList = [];
+    this.relationsTypeList = [];
+    this.filtersList = [];
+    this.raffinementsSem = [];
+
+    this.indexResultResearchList = 0;
  
     this.JDMservice.getDefinitions(this.searchWord).subscribe(res => {
-      this.wordDef = res[0].defGlobal;
+      console.log(res);
+      if (res[0].defGlobal.length == 0)
+        this.wordDef = "Aucune description générale pour ce mot";
+      else 
+        this.wordDef = res[0].defGlobal;
  
       this.showDefGenerale = true;
- 
-      if(res.length > 1) {
-        this.raffinementsSem = res.slice(1);
-        this.showRaffinements = true;
- 
+
+      this.raffinementsSem = res.slice(1);
+      
+      if(res[0]["rafFound"]) {
         this.JDMservice.getDefinitionsRaff(this.searchWord).subscribe(res => {
+          console.log(res);
           if(res.length > 1)
-            this.raffinementsSem = res.slice(1);      
-        });
- 
-        this.showRaffinements = true;
- 
-        this.JDMservice.getTypeRelations(this.searchWord).subscribe(res => {
-          this.relationsTypeList = res;
-          this.showrelationsTypes = true;
- 
-          console.log(this.relationsTypeList);
- 
-          for (let relationType of this.relationsTypeList)
-            relationType["isChecked"] = false;
- 
-          this.JDMservice.getRelations(this.searchWord).subscribe(res => {
-            let index = 0;
-            let arrayToAdd: any[] = new Array();
- 
-            for (let relation of res["Relations"][0]) {
-              if (index == 25) {
-                this.resultResearchList.push(arrayToAdd);
-                arrayToAdd = new Array();
- 
-                index = 0;
-              }
- 
-              for (let relationType of this.relationsTypeList) {
-                if (relation["idTypeRelation"] == relationType["id"]) {
-                  relation["relationType"] = relationType["name"];
- 
-                  break;
-                }
-              }
- 
-              let isSource = false;
-              let isTarget = false;
- 
-              for (let entitie of res["Entities"][0]) {
-                if (relation["idSource"] == entitie["id"]) {
-                  relation["source"] = entitie["name"];
- 
-                  isSource = true;
-                }
- 
-                else if (relation["idTarget"] == entitie["id"]) {
-                  relation["target"] = entitie["name"];
- 
-                  isTarget = true;
-                }
- 
-                if (isSource && isTarget)
-                  break;
-              }
- 
-              arrayToAdd.push(relation);
- 
-              index += 1;
-            }
- 
- 
-            console.log(res["Entities"])
-            console.log(res["Relations"][0]);
- 
-            this.resultResearchListToPrint = this.resultResearchList;
- 
-            this.researchIsDone = true; 
-          });
+            this.raffinementsSem = res.slice(1);   
         });
       }
+      else
+        this.rafFound = false;
+
+      this.showRaffinements = true;
+
+      this.JDMservice.getTypeRelations(this.searchWord).subscribe(res => {
+        this.relationsTypeList = res;
+        this.showrelationsTypes = true;
+
+        for (let relationType of this.relationsTypeList)
+          relationType["isChecked"] = false;
+
+        this.JDMservice.getRelations(this.searchWord).subscribe(res => {
+          let arrayToAdd: any[] = new Array();
+
+          for (let relation of res["Relations"][0]) {
+            for (let relationType of this.relationsTypeList) {
+              if (relation["idTypeRelation"] == relationType["id"]) {
+                relation["relationType"] = relationType["name"];
+
+                break;
+              }
+            }
+
+            let isSource = false;
+            let isTarget = false;
+
+            for (let entitie of res["Entities"][0]) {
+              if (relation["idSource"] == entitie["id"]) {
+                relation["source"] = entitie["name"];
+
+                isSource = true;
+              }
+
+              else if (relation["idTarget"] == entitie["id"]) {
+                relation["target"] = entitie["name"];
+
+                isTarget = true;
+              }
+
+              if (isSource && isTarget)
+                break;
+            }
+
+            if (arrayToAdd.length == 0)
+              arrayToAdd.push(relation);
+            else {
+              let isPushed = false;
+
+              for (let i = 0 ; i < arrayToAdd.length ; i++) {
+                if (arrayToAdd[i]["poids"] < relation["poids"]) {
+                  arrayToAdd.splice(i, 0, relation);
+
+                  isPushed = true;
+
+                  break;
+                }
+              }
+
+              if (!isPushed)
+                arrayToAdd.push(relation);
+            }  
+          }
+          //console.log(arrayToAdd);
+
+          while (arrayToAdd.length)
+            this.resultResearchList.push(arrayToAdd.splice(0, 25))
+
+          this.resultResearchListToPrint = this.resultResearchList;
+
+          this.researchIsDone = true; 
+        });
+      });
     });
   }
  
  
   openModal(raffinement: any, raffinementDef: any) {
       $("#raffinementModalTitle").text(raffinement);
- 
+      
       if (raffinementDef.length == 2)
         $("#raffinementModalText").text("Pas de description disponible pour ce raffinement :(");
       else
@@ -161,16 +186,53 @@ export class BodyComponentComponent implements OnInit {
   }
  
  
-  triAlphabetique() {
- 
-  }
- 
- 
   triPoids() {
- 
+    console.log(this.resultResearchListToPrint);
+    let localResultResearchListToPrint = this.resultResearchListToPrint;
+
+    let firstIndex = 0;
+    let secondIndex = 0;
+
+    let greaterNb = -100000;
+
+    let iToRemove = 0;
+    let kToRemove = 0;
+
+    let nbRelations = 0; 
+
+    if (this.resultResearchListToPrint.length == 1)
+      nbRelations = this.resultResearchListToPrint[0].length;
+    else
+      nbRelations = (this.resultResearchListToPrint.length - 1) * 25 + this.resultResearchListToPrint[this.resultResearchListToPrint.length - 1].length;
+    
+    for (let j = 0 ; j < nbRelations ; j++) {
+      for (let i = 0; i < localResultResearchListToPrint.length ; i++) {
+        for (let k = 0; k < localResultResearchListToPrint[i].length ; k++) {
+          //console.log(localResultResearchListToPrint[i][k]);
+          if (localResultResearchListToPrint[i][k]["poids"] > greaterNb) {
+            greaterNb = localResultResearchListToPrint[i][k]["poids"];
+  
+            iToRemove = i;
+            kToRemove = k;
+          }
+        }
+      }
+      //console.log(greaterNb);
+      this.resultResearchListToPrint[firstIndex][secondIndex] = localResultResearchListToPrint[iToRemove][kToRemove];
+      localResultResearchListToPrint[iToRemove].splice(kToRemove, 1);
+      //console.log(localResultResearchListToPrint[iToRemove]);
+      console.log("i : " + iToRemove, " - k : " + kToRemove);
+  
+      secondIndex += 1;
+  
+      if (secondIndex == 25) {
+        secondIndex = 0;
+        firstIndex += 1;
+      }
+    }
   }
- 
- 
+
+
   clickRelEntranteFilter() {
     this.isRelEntrante = !this.isRelEntrante; 
  
