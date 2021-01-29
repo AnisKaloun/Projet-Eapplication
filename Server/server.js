@@ -145,6 +145,10 @@ console.log("Dans le serveur");
             //eid=eid[0].replace(')','');
             eid=eid[0].substring(5,(eid[0].length-1));
             definition=definition[0].replace(regex2,'');
+            if(!definition[0].replace(/\s/g, '').length)
+            {
+              definition=definition[0].replace(/\s/g,'');
+            }
             let obj=[
               {
                 "id":"",
@@ -238,9 +242,14 @@ console.log("Dans le serveur");
 
                     let definition = data.match(regex);
                     
-                    if(definition!=null && definition[0].replace(/\s/g, '').length)
+                    if(definition!=null)
                     {
+                    
                     definition=definition[0].replace(regex2,'');
+                    if(!definition[0].replace(/\s/g, '').length)
+                      {
+                      definition=definition[0].replace(/\s/g,'');
+                      }
                    // console.log(definition);
                   //  console.log("i :"+i);
                     console.log("definition trouvé pour la relation "+recherche);
