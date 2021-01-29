@@ -145,9 +145,11 @@ console.log("Dans le serveur");
             //eid=eid[0].replace(')','');
             eid=eid[0].substring(5,(eid[0].length-1));
             definition=definition[0].replace(regex2,'');
-            if(!definition[0].replace(/\s/g, '').length)
+
+            if(!definition.toString("utf8").replace(/\s/g, '').length)
             {
-              definition=definition[0].replace(/\s/g,'');
+              console.log("je rentre içi");
+              definition=definition.toString("utf8").replace(/\s/g,'');
             }
             let obj=[
               {
@@ -246,10 +248,10 @@ console.log("Dans le serveur");
                     {
                     
                     definition=definition[0].replace(regex2,'');
-                    if(!definition[0].replace(/\s/g, '').length)
-                      {
-                      definition=definition[0].replace(/\s/g,'');
-                      }
+                    if(!definition.toString("utf8").replace(/\s/g, '').length)
+                    {
+                    definition=definition.toString("utf8").replace(/\s/g,'');
+                    }
                    // console.log(definition);
                   //  console.log("i :"+i);
                     console.log("definition trouvé pour la relation "+recherche);
