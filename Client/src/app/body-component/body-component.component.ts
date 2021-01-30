@@ -93,7 +93,7 @@ export class BodyComponentComponent implements OnInit {
 
         this.JDMservice.getRelations(this.searchWord).subscribe(res => {
           let arrayToAdd: any[] = new Array();
-
+          
           for (let relation of res["Relations"][0]) {
             for (let relationType of this.relationsTypeList) {
               if (relation["idTypeRelation"] == relationType["id"]) {
@@ -129,7 +129,8 @@ export class BodyComponentComponent implements OnInit {
               let isPushed = false;
 
               for (let i = 0 ; i < arrayToAdd.length ; i++) {
-                if (arrayToAdd[i]["poids"] < relation["poids"]) {
+                //console.log(typeof(parseInt(arrayToAdd[i]["poids"], 10)))
+                if (1 * arrayToAdd[i]["poids"] < 1 * relation["poids"]) {
                   arrayToAdd.splice(i, 0, relation);
 
                   isPushed = true;
@@ -142,11 +143,13 @@ export class BodyComponentComponent implements OnInit {
                 arrayToAdd.push(relation);
             }  
           }
-          //console.log(arrayToAdd);
+
+          //for (let element of arrayToAdd)
+            //console.log(element);
 
           while (arrayToAdd.length)
             this.resultResearchList.push(arrayToAdd.splice(0, 25))
-
+          
           this.resultResearchListToPrint = this.resultResearchList;
 
           this.researchIsDone = true; 
