@@ -7,7 +7,11 @@
       </h5>
 
       <div class="div_recherche_filtres">
-          <input type="text" name="word" class="input_search">
+          <input list="search_word" name="search_word" class="input_search" (input)="updateData($event)" autocomplete="off"/>
+            <datalist id="search_word">
+              <option *ngFor="let value of autoCompleteList" value="{{ value }}">
+            </datalist>
+            
           <button type="button" class="btn btn-primary button_search" (click)="search()">Rechercher</button>
       </div>
   </div>

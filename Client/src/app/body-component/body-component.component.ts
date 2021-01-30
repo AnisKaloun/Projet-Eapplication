@@ -35,6 +35,8 @@ export class BodyComponentComponent implements OnInit {
   public searchWord = "Chat";
  
   public wordDef = "";
+
+  public autoCompleteList: any = [];
  
   constructor(private modalService: NgbModal, private JDMservice :JeuxDeMotService) { 
     
@@ -44,7 +46,26 @@ export class BodyComponentComponent implements OnInit {
   ngOnInit() {
   }
  
- 
+  
+  updateData(e :Event) {
+    const target = e.target as HTMLTextAreaElement;
+
+    let word = "";
+    let wordArray = [];
+
+    if(target.value != null) {
+      word = target.value;
+
+      if(word.length > 0 && word.length % 3 == 0)
+        this.JDMservice.getAutocomplete(word).subscribe(res => {
+          console.log(typeof(res));
+          console.log(res);
+          this.autoCompleteList = res;
+        }); 
+    }
+  }
+
+
   search() {
     this.searchWord = $(".input_search").val();
 
@@ -129,7 +150,6 @@ export class BodyComponentComponent implements OnInit {
               let isPushed = false;
 
               for (let i = 0 ; i < arrayToAdd.length ; i++) {
-                //console.log(typeof(parseInt(arrayToAdd[i]["poids"], 10)))
                 if (1 * arrayToAdd[i]["poids"] < 1 * relation["poids"]) {
                   arrayToAdd.splice(i, 0, relation);
 
@@ -162,7 +182,18 @@ export class BodyComponentComponent implements OnInit {
   openModal(raffinement: any, raffinementDef: any) {
       $("#raffinementModalTitle").text(raffinement);
       
-      if (raffinementDef.length == 2)
+      let isEmptyString = true;
+
+      for (let i = 0; i < raffinementDef.length; i++) {
+        if (raffinementDef.charAt(i) != " ") {
+          isEmptyString = false;
+
+          break;
+        }
+
+      }
+
+      if (isEmptyString)
         $("#raffinementModalText").text("Pas de description disponible pour ce raffinement :(");
       else
         $("#raffinementModalText").text(raffinementDef);
