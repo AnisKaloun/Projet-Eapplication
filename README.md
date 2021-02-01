@@ -13,3 +13,11 @@ rentrez sur le dossier Serveur et éxecuter la commande `node server.js`
 (avoir au préalable installer les dépandances d'angular grace a la commande `npm install -g angular-cli`
 
 ensuite vous rentrer sur le dossier Client et éxecuter la commande `ng serve -o`
+
+## Lien vers le code Git
+
+https://github.com/AnisKaloun/Projet-Eapplication
+
+## Lien vers le site déployé
+
+https://projet-eapp.herokuapp.com/
