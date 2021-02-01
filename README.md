@@ -1,5 +1,10 @@
 # Projet-Eapplication
 
+trinome :
+Anis KALOUN
+Vincent MAZEL
+Corentin KIRSCHER
+
 Voici les commandes pour lancer ce site en localhost.
 
 ## Installation des dépendances 
